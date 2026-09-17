@@ -1,4 +1,4 @@
 [core]
-    remote = myremote
-['remote "myremote"']
+    remote = dvc2
+['remote "dvc2"']
     url = C:\Users\bhuvn\AppData\Local\Temp
