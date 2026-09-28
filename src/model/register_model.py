@@ -2,8 +2,20 @@ import json
 import mlflow
 import logging
 import dagshub
+import os
+
+dagshub_token = os.getenv("DAGSHUB_PAT")
+if not dagshub_token:
+    raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+
 mlflow.set_tracking_uri('https://dagshub.com/bhuvneshjain2004/mlops-mini-project.mlflow')
-dagshub.init(repo_owner='bhuvneshjain2004', repo_name='mlops-mini-project', mlflow=True)
+
+# we use key based authentication 
+# dagshub.init(repo_owner='bhuvneshjain2004', repo_name='mlops-mini-project', mlflow=True)
 
 # logging configuration
 logger = logging.getLogger('model_registration')
