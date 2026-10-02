@@ -8,7 +8,7 @@ COPY models/vectorizer.pkl /app/models/vectorizer.pkl
 
 RUN pip install -r requirements.txt
 
-RUN python -m nltk.downloader stopwords wordnet
+# RUN python -m nltk.downloader stopwords wordnet
 
 EXPOSE 5000
 
