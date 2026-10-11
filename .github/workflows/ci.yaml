@@ -73,7 +73,7 @@ jobs:
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.2.0
-        timeout-minutes: 5
+        timeout-minutes: 10
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         with:
@@ -82,17 +82,27 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: DAGSHUB_PAT
           timeout: 60s
-          command_timeout: 4m
+          command_timeout: 9m
           script: |
             set -e
 
-            echo "Pulling latest Docker image..."
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/emotion2:latest
+            echo "1. Checking disk space..."
+            df -h /
 
-            echo "Removing previous container..."
+            echo "2. Removing old application container..."
             docker rm -f my-app || true
 
-            echo "Starting updated application..."
+            echo "3. Removing unused Docker images..."
+            docker image prune -a -f
+
+            echo "4. Checking disk space after cleanup..."
+            df -h /
+            docker system df
+
+            echo "5. Pulling latest Docker image..."
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/emotion2:latest
+
+            echo "6. Starting updated application..."
             docker run -d \
               --restart unless-stopped \
               --name my-app \
@@ -100,10 +110,8 @@ jobs:
               -e DAGSHUB_PAT="$DAGSHUB_PAT" \
               ${{ secrets.DOCKER_HUB_USERNAME }}/emotion2:latest
 
-            echo "Checking container status..."
+            echo "7. Checking container status..."
             docker ps --filter name=my-app
 
-            echo "Recent application logs:"
+            echo "8. Recent application logs..."
             docker logs --tail 30 my-app
-
-  
