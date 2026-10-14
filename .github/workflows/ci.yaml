@@ -54,6 +54,7 @@ jobs:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: python -m unittest tests/test_flask_app.py
 
+
       - name: Login to AWS ECR
         run: |
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
